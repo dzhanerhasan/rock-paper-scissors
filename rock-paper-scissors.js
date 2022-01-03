@@ -1,67 +1,62 @@
 function computerPlay() {
-    let num = Math.floor(Math.random() * 3);
-    let shape;
-    switch (num) {
-        case 0: shape = "rock"; break;
-        case 1: shape = "paper"; break;
-        case 2: shape = "scissors"; break;
-    }
-    return shape;
+    let index = Math.floor(Math.random() * 3);
+    let rpsArray = ["Rock", "Paper", "Scissors"];
+    return rpsArray[index];
 }
 
 function playRound(playerSelection, computerSelection) {
-    let playerToLower = playerSelection.toLowerCase();
+    let pChoiceLower = playerSelection.toLowerCase();
+    let compChoiceLower = computerSelection.toLowerCase();
 
-    if (playerToLower === computerSelection) {
-        return 'Draw';
-    }
-    
-    if (playerToLower === "rock" && computerSelection === "scissors" ||
-        playerToLower === "paper" && computerSelection === "rock" ||
-        playerToLower === "scissors" && computerSelection === "paper") {
-        return 'Win';
+    if (pChoiceLower === compChoiceLower) {
+        return "It's a draw.";
     }
 
-    if (playerToLower === "rock" && computerSelection === "paper" ||
-        playerToLower === "paper" && computerSelection === "scissors" ||
-        playerToLower === "scissors" && computerSelection === "rock") {
-        return 'Lose';
-    }   
+    if (pChoiceLower === "rock" && compChoiceLower === "scissors" ||
+        pChoiceLower === "paper" && compChoiceLower === "rock" ||
+        pChoiceLower === "scissors" && compChoiceLower === "paper") {
+            return `Good job! ${playerSelection} beats ${computerSelection}.`;
+        }
+
+    return `Oh, no! ${computerSelection} beats ${playerSelection}.`;
 }
 
-let myScore = 0;
+function updateScores(result) {
+    if (result.startsWith('Good')) {
+        playerScore += 1;
+        playerInfo.textContent = `Your current score is: ${playerScore}`;
+    } 
+    else if (result.startsWith('Oh')) {
+        computerScore += 1;
+        computerInfo.textContent = `The computer's score is: ${computerScore}`
+    }
+}
+
+let playerScore = 0;
 let computerScore = 0;
+
+const playerInfo = document.querySelector(".player-score");
+const computerInfo = document.querySelector(".computer-score");
 
 const container = document.querySelector('body');
 const content = document.createElement('div');
-const winner = document.createElement('h1');
+container.appendChild(content)
 
-const myInfo = document.createElement('p');
-content.appendChild(myInfo);
-const computerInfo = document.createElement('p');
-content.appendChild(computerInfo);
-
-container.appendChild(content);
-container.appendChild(winner);
-
-const buttons = document.querySelectorAll('button');
-
-buttons.forEach(function(button) {
-    button.addEventListener('click', function(event) {
-        if (playRound(this.className, computerPlay()) === "Win") {
-            myScore += 1;
-            myInfo.textContent = `My score: ${myScore}`;
-        } 
-        else if (playRound(this.className, computerPlay()) === "Lose") {
-            computerScore += 1;
-            computerInfo.textContent = `Computer's score: ${computerScore}`;
-        }
-        if (myScore === 5) {
-            winner.setAttribute('style', 'color: green')
-            winner.textContent = "You win!";
-        } else if (computerScore === 5) {
-            winner.setAttribute('style', 'color: red')
-            winner.textContent = "You lose :(";
+const shapes = document.querySelectorAll('button');
+shapes.forEach(function(shape) {
+    shape.addEventListener('click', function(event) {
+        const result = playRound(this.textContent, computerPlay());
+        updateScores(result);
+        if (playerScore === 5 || computerScore === 5) {
+            playerScore === 5 ?
+            content.textContent = "Congratulations! You've won!" :
+            content.textContent = "Unlucky, try again."
+            playerScore = 0;
+            computerScore = 0;
+            playerInfo.textContent = `Your current score is: ${playerScore}`;
+            computerInfo.textContent = `The computer's score is: ${computerScore}`
+        } else {
+            content.textContent = result;
         }
     });
 });

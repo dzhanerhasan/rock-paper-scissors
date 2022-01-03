@@ -1,1 +1,1 @@
-This is the classic game of "Rock, Paper, Scissors" against the computer.
+This is the classic game of "Rock, Paper, Scissors", against the computer.
